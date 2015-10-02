@@ -8,10 +8,11 @@
 typedef int bool;
 #define true 1
 #define false 0
-//process generator
-//returns a 0 for child
-//returns a 1 for original parent
-//returns a -1 for failure
+/*process generator
+/ returns a 0 for child
+/ returns a 1 for original parent
+/ returns a -1 for failure
+*/
 int PG(int n){
     //if the processes have all been created, then return that you are a child
     if(n == 0){
@@ -73,48 +74,51 @@ int main(int argc, char* argv[]){
       //error
       printf("Error creating a child");
     } 
-    // otherwise we are in parent
-    //display the tree of processes
-    //system("pstree -p");
-    const char* userid = "\nPlease enter your user id on this machine > ";
-    char* gotUID = readline(userid);
-    printf("Here is the uid %s: ", gotUID);
-    char* command = strcat(command, gotUID);
-     
-    //system(command);
+    //string that represents the menu. Options are selected by typing in the string.
    	const char* prompt = "\nPlease choose one of the following process operations by name: \n\n 1. list \n 2. suspend \n 3. resume \n 4. terminate \n 5. exit \n > ";
-    
+    //from the process PIDs selectr one that is valid
     const char* processID = "Please enter a valid PID >";
-    
+    //loop on bailout != 0 until we exit
 	  int bailout = 0;
 	  while (!bailout) {
-
+     //read in the user's input and then go to each case.
      char* reply = readline(prompt);
      printf("\nYou selected: %s\n", reply);
      if (!strcmp(reply, "list")) { //list all processes in the process tree
           printf("Listing all processes: \n");
+          system("ps -ppid (pidlist) -o '");//read the man file for ps
      }
      else if (!strcmp(reply, "suspend")) { //suspend processes by PID
           int pid = atoi(readline(processID));
-          printf("Suspending process: %i\n", pid);
+          if(pid > 1){
+                 printf("Suspending process: %i\n", pid);
+                 int retVal = kill(pid, SIGSTOP);
+          } else {
+            printf("Invalid PID.\n");
+          }
      }
      else if (!strcmp(reply, "resume")) { //resume processes by PID
           int pid = atoi(readline(processID));
-          printf("Resuming process: %i\n", pid);
+           if(pid > 1){
+                 printf("Resuming process: %i\n", pid);
+                 int retVal = kill(pid, SIGCONT);
+          } else {
+            printf("Invalid PID.\n");
+          }
      }
      else if (!strcmp(reply, "terminate")) { //terminate processes by PID
           int pid = atoi(readline(processID));
-          if(pid != 0){
+          if(pid > 1){
                  printf("Terminating process: %i\n", pid);
                  int retVal = kill(pid, SIGTERM);
           } else {
-            printf("Invalid PID:  Reason: not an integer");
+            printf("Invalid PID");
           }
      }
      else if (!strcmp(reply, "exit")) { //exit and terminate all processes
 			bailout = 1;
       //kill off all the processes in the tree
-      int retVal = kill(result, SIGTERM);
+      system("killall PMS");
      } 
 	   else {
 			printf("This is not a valid option, try again please");
@@ -122,6 +126,5 @@ int main(int argc, char* argv[]){
       free(reply);
     }
     printf("Exiting\n");
-    
 }
 
