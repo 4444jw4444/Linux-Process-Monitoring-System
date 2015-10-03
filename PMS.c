@@ -8,6 +8,7 @@
 typedef int bool;
 #define true 1
 #define false 0
+//Jorin Weatherston v00711046 Oct 2,2015
 /*process generator
 / returns a 0 for child
 / returns a 1 for original parent
@@ -91,7 +92,6 @@ int main(int argc, char* argv[]){
                  if(!kill(pid, SIGSTOP) == 0){
                       printf("Suspend failed.");
                  }
-                 
           } else {
             printf("Invalid PID.\n");
           }
@@ -127,7 +127,7 @@ int main(int argc, char* argv[]){
       free(reply);
     }
     printf("Exiting\n");
-    //kill off all the processes in the tree
+    //kill off all the processes in the tree    
     system("killall PMS");
 }
 
