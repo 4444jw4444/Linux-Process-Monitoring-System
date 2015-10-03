@@ -18,25 +18,20 @@ int PG(int n){
     if(n == 0){
          return 0;
     }
-    
     //init the randomizer
     srand(time(NULL));
     //prepare a randomly sized chunk to be created.
     int chunk = rand() % n + 1;
     //Remove this from n.
     n = n - chunk;
-    
     //we are the first child    
     bool firstChild = true;
-    
     //so long as there are still processes left in chunk, repeat.
     while(chunk > 0){
          //decrement chunk       
          chunk --;
-         
          //fork!
          pid_t forkedChild = fork();
-         
          //now the process deviates into different processes. Here we check if fork() returned 0 for a child
          if(forkedChild == 0){
               //if we are the first child, then we recurse on the PG call with our n = n-chunk          
@@ -86,13 +81,17 @@ int main(int argc, char* argv[]){
      printf("\nYou selected: %s\n", reply);
      if (!strcmp(reply, "list")) { //list all processes in the process tree
           printf("Listing all processes: \n");
-          system("ps -ppid (pidlist) -o '");//read the man file for ps
+          system("ps -f | head -1");//display the header row
+          system("ps -f | grep jorinw");//display the rows of processes
      }
      else if (!strcmp(reply, "suspend")) { //suspend processes by PID
           int pid = atoi(readline(processID));
           if(pid > 1){
                  printf("Suspending process: %i\n", pid);
-                 int retVal = kill(pid, SIGSTOP);
+                 if(!kill(pid, SIGSTOP) == 0){
+                      printf("Suspend failed.");
+                 }
+                 
           } else {
             printf("Invalid PID.\n");
           }
@@ -101,7 +100,9 @@ int main(int argc, char* argv[]){
           int pid = atoi(readline(processID));
            if(pid > 1){
                  printf("Resuming process: %i\n", pid);
-                 int retVal = kill(pid, SIGCONT);
+                 if(!kill(pid, SIGCONT) == 0){
+                      printf("Resume failed.");
+                 }
           } else {
             printf("Invalid PID.\n");
           }
@@ -110,15 +111,15 @@ int main(int argc, char* argv[]){
           int pid = atoi(readline(processID));
           if(pid > 1){
                  printf("Terminating process: %i\n", pid);
-                 int retVal = kill(pid, SIGTERM);
+                 if(!kill(pid, SIGTERM) == 0){
+                      printf("Terminate failed.");
+                 }
           } else {
             printf("Invalid PID");
           }
      }
      else if (!strcmp(reply, "exit")) { //exit and terminate all processes
 			bailout = 1;
-      //kill off all the processes in the tree
-      system("killall PMS");
      } 
 	   else {
 			printf("This is not a valid option, try again please");
@@ -126,5 +127,7 @@ int main(int argc, char* argv[]){
       free(reply);
     }
     printf("Exiting\n");
+    //kill off all the processes in the tree
+    system("killall PMS");
 }
 
