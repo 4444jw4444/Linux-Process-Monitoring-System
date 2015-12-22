@@ -1,5 +1,4 @@
 # Process Management System
-Process Management System
 
 This application generates and monitors process forks. These forks are monitoring and provide heartbeat information as feedback to the CLI.
 
